@@ -92,7 +92,8 @@ def main():
 			if soccer_data[i][j] == '': emptyvarcount += 1
 	print("======================\nCheck For Missing Values:\n#+The number of missing/empty values is " + str(emptyvarcount) + "\n======================\n")
 	
-	#This function changes the dataset: It should contain 
+	#This function changes the dataset: It should contain data about the
+	# last 3/5/10 games and home team win metric
 	better_soccer_data = last_ten_features(soccer_data)
 
 	print("======================\n*Feature Engineering Check: ", len(better_soccer_data), "data samples,", (len(better_soccer_data[0])-1), "features\n", better_soccer_data[0], "\n", better_soccer_data[1], "\n======================\n")
