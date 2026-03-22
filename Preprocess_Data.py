@@ -99,7 +99,16 @@ def main():
 	print("======================\n*Feature Engineering Check: ", len(better_soccer_data), "data samples,", (len(better_soccer_data[0])-1), "features\n", better_soccer_data[0], "\n", better_soccer_data[1], "\n======================\n")
 
 
+	#Here is what's left TODO::::
+	#-Outlier Flagging/Handling
+	#-Train/Test Split (80/20)
+	#-Range Normalization (0 to 1, needed for Logistic Regression)
+	#-Pearson Correlation (I'll probably copy paste that code from Assignment 1)
+	#-Feature Selection (Drop features with Pearson correlation below 0.05, might not be necessary)
+	#-Visualizations
+	#-Save CSV of Training Data and Testing Data separately
 
+	#We aren't training models just yet, like KNN and cross-validation in the homework
 
 	
 
