@@ -1,6 +1,37 @@
 import csv
 import random
 
+def getmean(soccer_data_here): #I adapted this from my Assignment 1, pls don't shoot XD
+	meanfirst = True
+	mean = []
+	missing = []
+	for j in range(len(soccer_data_here[0])):
+		mean.append(0)
+		missing.append(0)
+
+	for i in range(len(soccer_data_here)):
+		if meanfirst == True:
+			meanfirst = False
+			continue
+		for j in range(len(soccer_data_here[i])):
+			if soccer_data_here[i][j] != '': mean[j] += float(soccer_data_here[i][j])
+			else: missing[j] += 1
+			
+	for j in range(len(mean)):
+		mean[j] = mean[j]/((len(soccer_data_here)-1)-missing[j])
+		if j != len(mean)-1:
+			mean [j] = round(mean[j], 4)
+		#print(mean[j])
+	#now I have the means XD
+	return mean
+
+def pearson(feature, featuremean, target, targetmean):
+	dividend = sum((float(feature[i]) - featuremean) * (float(target[i]) - targetmean) for i in range(len(feature)))
+	featuredivisor = sum((float(feature[i]) - featuremean) ** 2 for i in range(len(feature)))
+	targetdivisor = sum((float(target[i]) - targetmean) ** 2 for i in range(len(feature)))
+	
+	return dividend / (featuredivisor * targetdivisor) ** 0.5
+
 
 def get_stats(history, n):
 	last_few = history[-n:]
@@ -92,6 +123,16 @@ def main():
 			if soccer_data[i][j] == '': emptyvarcount += 1
 	print("======================\nCheck For Missing Values:\n#+The number of missing/empty values is " + str(emptyvarcount) + "\n======================\n")
 	
+	dupecount = 0
+	sofar = set()
+	for i in range(1, len(soccer_data)):
+		check = (soccer_data[i][1], soccer_data[i][2], soccer_data[i][5])
+		if check in sofar: dupecount += 1
+		else: sofar.add(check)
+	print("======================\nClean Data:\n#+The number of duplicate entries is " + str(dupecount) + "\n======================\n")
+	
+
+
 	#This function changes the dataset: It should contain data about the
 	# last 3/5/10 games and home team win metric
 	better_soccer_data = last_ten_features(soccer_data)
@@ -99,17 +140,36 @@ def main():
 	print("======================\n*Feature Engineering Check: ", len(better_soccer_data), "data samples,", (len(better_soccer_data[0])-1), "features\n", better_soccer_data[0], "\n", better_soccer_data[1], "\n======================\n")
 
 
+
+	# Pearson Correlation code adapted from my Assignment 1 (Kurtis Volker)
+	mean = getmean(better_soccer_data)
+	columns = []
+
+	for j in range(len(better_soccer_data[0])):
+		columns.append([])
+		
+	for i in range(len(better_soccer_data)):
+		if i == 0: continue
+		for j in range(len(better_soccer_data[i])):
+			columns[j].append(better_soccer_data[i][j])
+
+	Pcorrelations = []
+	for i in range(len(columns)):
+		Pcorrelations.append(pearson(columns[i], mean[i], columns[-1], mean[-1]))
+
+	print("======================\n*Pearson Correlations: ",  Pcorrelations,  "\n======================\n")
+
 	#Here is what's left TODO::::
 	#-Outlier Flagging/Handling
-	#-Train/Test Split (80/20)
+	#XxXxremovedxXxX
 	#-Range Normalization (0 to 1, needed for Logistic Regression)
 	#-Pearson Correlation (I'll probably copy paste that code from Assignment 1)
 	#-Feature Selection (Drop features with Pearson correlation below 0.05, might not be necessary)
 	#-Visualizations
-	#-Save CSV of Training Data and Testing Data separately
+	#-Save CSV of the Data
 
 	#We aren't training models just yet, like KNN and cross-validation in the homework
-
+	#-We are not Train/Test Splitting yet, that is the start of the later parts.
 	
 
 
