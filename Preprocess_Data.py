@@ -1,6 +1,11 @@
 import csv
 import random
 
+
+def normalize(soccer_data_here):
+	print("+=+=+= NORMALIZE function run: this is TODO!! +=+=+=\n")
+	pass
+
 def getmean(soccer_data_here): #I adapted this from my Assignment 1, pls don't shoot XD
 	meanfirst = True
 	mean = []
@@ -54,7 +59,7 @@ def get_stats(history, n):
 
 def last_ten_features(soccer_data_here):
 	team_history = {}
-	altered_data = [['Home_L3_Pts', 'Home_L3_Goals', 'Home_L3_EnemyGoals', 'Home_L3_Wins', 'Home_L3_Losses', 'Home_L3_HomeWins', 'Home_L5_Pts', 'Home_L5_Goals', 'Home_L5_EnemyGoals', 'Home_L5_Wins', 'Home_L5_Losses', 'Home_L5_HomeWins', 'Home_L10_Pts', 'Home_L10_Goals', 'Home_L10_EnemyGoals', 'Home_L10_Wins', 'Home_L10_Losses', 'Home_L10_HomeWins', 'Away_L3_Pts', 'Away_L3_Goals', 'Away_L3_EnemyGoals', 'Away_L3_Wins', 'Away_L3_Losses', 'Away_L3_HomeWins', 'Away_L5_Pts', 'Away_L5_Goals', 'Away_L5_EnemyGoals', 'Away_L5_Wins', 'Away_L5_Losses', 'Away_L5_HomeWins', 'Away_L10_Pts', 'Away_L10_Goals', 'Away_L10_EnemyGoals', 'Away_L10_Wins', 'Away_L10_Losses', 'Away_L10_HomeWins', 'Target_Did_Home_Win']]
+	altered_data = [['Home_L3_Pts', 'Home_L3_Goals', 'Home_L3_EnemyGoals', 'Home_L3_Wins', 'Home_L3_Losses', 'Home_L3_HomeWins', 'Home_L5_Pts', 'Home_L5_Goals', 'Home_L5_EnemyGoals', 'Home_L5_Wins', 'Home_L5_Losses', 'Home_L5_HomeWins', 'Home_L10_Pts', 'Home_L10_Goals', 'Home_L10_EnemyGoals', 'Home_L10_Wins', 'Home_L10_Losses', 'Home_L10_HomeWins', 'Away_L3_Pts', 'Away_L3_Goals', 'Away_L3_EnemyGoals', 'Away_L3_Wins', 'Away_L3_Losses', 'Away_L3_HomeWins', 'Away_L5_Pts', 'Away_L5_Goals', 'Away_L5_EnemyGoals', 'Away_L5_Wins', 'Away_L5_Losses', 'Away_L5_HomeWins', 'Away_L10_Pts', 'Away_L10_Goals', 'Away_L10_EnemyGoals', 'Away_L10_Wins', 'Away_L10_Losses', 'Away_L10_HomeWins', 'Outlier?', 'Target_Did_Home_Win']]
 	
 	for i in range(1, len(soccer_data_here)):
 		team1 = soccer_data_here[i][2]
@@ -74,7 +79,10 @@ def last_ten_features(soccer_data_here):
 			target = 0
 			if int(soccer_data_here[i][13]) == 3: target = 1
 
-			altered_data.append(last3_team1 + last5_team1 + last10_team1 + last3_team2 + last5_team2 + last10_team2 + [target])
+			outlier = 0
+			if int(soccer_data_here[i][8]) + int(soccer_data_here[i][9]) >= 8: outlier = 1
+
+			altered_data.append(last3_team1 + last5_team1 + last10_team1 + last3_team2 + last5_team2 + last10_team2 + [outlier]  + [target])
 
 		team_history[team1].append({'points': int(soccer_data_here[i][13]), 'goals': int(soccer_data_here[i][8]), 'enemygoals': int(soccer_data_here[i][9]), 'hometeam': 1})
 		team_history[team2].append({'points': int(soccer_data_here[i][14]), 'goals': int(soccer_data_here[i][9]), 'enemygoals': int(soccer_data_here[i][8]), 'hometeam': 0})
@@ -159,12 +167,16 @@ def main():
 
 	print("======================\n*Pearson Correlations: ",  Pcorrelations,  "\n======================\n")
 
+
+	better_soccer_data = normalize(better_soccer_data)
+
 	#Here is what's left TODO::::
-	#-Outlier Flagging/Handling
+	#++++Outlier Flagging/Handling XxCOMPLETEDxX
 	#XxXxremovedxXxX
-	#-Range Normalization (0 to 1, needed for Logistic Regression)
-	#-Pearson Correlation (I'll probably copy paste that code from Assignment 1)
-	#-Feature Selection (Drop features with Pearson correlation below 0.05, might not be necessary)
+	#++++Pearson Correlation XxCOMPLETEDxX
+	
+	#-Range Normalization (0 to 1, needed for Logistic Regression/SVM/DecisionTree)
+	#-Feature Selection (Drop features with Pearson correlation below 0.05, EZ)
 	#-Visualizations
 	#-Save CSV of the Data
 
