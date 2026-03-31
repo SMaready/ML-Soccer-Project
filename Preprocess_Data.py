@@ -1,11 +1,6 @@
 import csv
 import random
 
-
-def normalize(soccer_data_here):
-	print("+=+=+= NORMALIZE function run: this is TODO!! +=+=+=\n")
-	pass
-
 def getmean(soccer_data_here): #I adapted this from my Assignment 1, pls don't shoot XD
 	meanfirst = True
 	mean = []
@@ -168,22 +163,74 @@ def main():
 	print("======================\n*Pearson Correlations: ",  Pcorrelations,  "\n======================\n")
 
 
-	better_soccer_data = normalize(better_soccer_data)
 
-	#Here is what's left TODO::::
-	#++++Outlier Flagging/Handling XxCOMPLETEDxX
-	#XxXxremovedxXxX
-	#++++Pearson Correlation XxCOMPLETEDxX
+	threshold = 0.05
+	feature_indices = list(range(len(better_soccer_data[0]) - 1))  # exclude target column
+
+	kept_indices   = [i for i in feature_indices if abs(Pcorrelations[i]) >= threshold]
+	dropped_indices = [i for i in feature_indices if abs(Pcorrelations[i]) <  threshold]
+
+	# Build the new dataset: kept feature columns + target column (always last)
+	target_col_idx = len(better_soccer_data[0]) - 1
+	selected_cols  = kept_indices + [target_col_idx]
+
+	selected_data = []
+	for i, row in enumerate(better_soccer_data):
+		selected_data.append([row[j] for j in selected_cols])
+
+	print("======================")
+	print("*Feature Selection:")
+	print(f"  Threshold: |r| >= {threshold}")
+	print(f"  Features dropped ({len(dropped_indices)}):")
+	for idx in dropped_indices:
+		print(f"    Feature {idx} ({better_soccer_data[0][idx]}): r = {Pcorrelations[idx]:.4f}")
+	print(f"  Features kept: {len(kept_indices)}")
+	print(f"  New dataset shape: {len(selected_data)-1} samples x {len(selected_data[0])-1} features")
+	print("\n  New headers:", selected_data[0])
+	print("======================")
+
+
+	n_features = len(selected_data[0]) - 1  # exclude target
+
+	# Compute per-feature min and max (skip header row)
+	col_min = [float('inf')]  * n_features
+	col_max = [float('-inf')] * n_features
+
+	for i in range(1, len(selected_data)):
+		for j in range(n_features):
+			val = float(selected_data[i][j])
+			if val < col_min[j]: col_min[j] = val
+			if val > col_max[j]: col_max[j] = val
+
+	# Build normalized dataset (header row stays as strings)
+	normalized_data = [selected_data[0][:]]  # copy header
+
+	for i in range(1, len(selected_data)):
+		norm_row = []
+		for j in range(n_features):
+			val   = float(selected_data[i][j])
+			denom = col_max[j] - col_min[j]
+			norm_row.append(round((val - col_min[j]) / denom, 6) if denom != 0 else 0.0)
+		norm_row.append(selected_data[i][-1])  # preserve original target
+		normalized_data.append(norm_row)
+
+	print("======================")
+	print("*Range Normalization (Min-Max [0, 1]):")
+	print(f"  Features normalized: {n_features}  |  Target column preserved")
+	print(f"  Sample normalized row [0]: {normalized_data[1]}")
+	print("\n  Per-feature ranges (min → max):")
+	for j in range(n_features):
+		print(f"    {selected_data[0][j]:30s}  min={col_min[j]:.1f}  max={col_max[j]:.1f}")
+	print("======================")
+
 	
-	#-Range Normalization (0 to 1, needed for Logistic Regression/SVM/DecisionTree)
-	#-Feature Selection (Drop features with Pearson correlation below 0.05, EZ)
-	#-Visualizations
-	#-Save CSV of the Data
+	with open('soccer_preprocessed.csv', 'w', newline='') as f:
+		writer = csv.writer(f)
+		for row in normalized_data:
+			writer.writerow(row)
 
-	#We aren't training models just yet, like KNN and cross-validation in the homework
-	#-We are not Train/Test Splitting yet, that is the start of the later parts.
-	
-
+	print("Saved soccer_preprocessed.csv!")
+	print("Rows:", len(normalized_data) - 1, "| Features:", len(normalized_data[0]) - 1, "| Target: last column")
 
 
 
