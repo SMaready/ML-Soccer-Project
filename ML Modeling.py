@@ -4,6 +4,9 @@ from sklearn.linear_model import LogisticRegression
 import pickle
 
 
+from sklearn.ensemble import RandomForestClassifier
+
+
 def main():
 	#Import
 	better_soccer_data = []
@@ -68,17 +71,26 @@ def main():
 	pickle.dump(model2, open('finalized_model_M2.sav', 'wb'))
 
 
+	# Random Forest
+	randomTrees = RandomForestClassifier(n_estimators=300,max_depth=10,min_samples_split=5,random_state=101)
+	randomTrees.fit(training_set, training_labels)
+
+
 	# Load Models from disk & print()
 	load1 = pickle.load(open('finalized_model_M1.sav', 'rb'))
 	load2 = pickle.load(open('finalized_model_M2.sav', 'rb'))
 
 	result1 = load1.score(testing_set, testing_labels)
 	result2 = load2.score(testing_setR, testing_labels)
+	resultTrees = randomTrees.score(testing_set, testing_labels)
 
 	print("Model 1 (Full features) score:    " + str(round(result1 * 100, 2)) + "%")
 	print("Model 2 (Reduced features) score: " + str(round(result2 * 100, 2)) + "%")
 	# Looks like we get about 60% accuracy for both
 	# This means it's learning something from the data, just not much XD
+
+	print("Random Forest (Full features) score: " + str(round(resultTrees * 100, 2)) + "%")
+	print(randomTrees.feature_importances_)
 
 if __name__ == "__main__":
 	main()
